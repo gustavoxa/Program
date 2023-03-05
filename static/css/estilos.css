@@ -1,0 +1,33 @@
+body {
+    
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+footer {
+    padding: 1em 0;
+    text-align: center;
+    margin-top: auto;
+}
+ 
+h1 {
+    text-align: center;
+}
+
+table {
+    font-size: medium;
+    align-items: center;
+    text-align: center;
+    margin-left: 200px;
+}
+th,td {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 18px;
+    width: 200px;
+}
+a {
+    font-size: 20px;
+}

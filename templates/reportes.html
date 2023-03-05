@@ -1,0 +1,38 @@
+{%extends './base.html'%}
+{%block title%}
+<title>Reportes</title>
+{%endblock%}
+
+{% block body %}
+<h1>
+    Reportes
+</h1>
+<div class="row">
+    <div class="col-md-6">
+        <br>
+        <table  class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td > Ingrese la dirección IP</td>
+                    <td ><input type="text" name="direccionIP" value=" "></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="col-md-10">
+        <br>
+        <table   class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td ><button>Protocolos</button></td>
+                    <td ><button>Estado del dispositivo</button></td>
+                    <td> <button>Configuraciones de Red</button> </td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+
+</div> 
+{%endblock%}
