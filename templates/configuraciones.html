@@ -1,20 +1,12 @@
 {%extends './base.html'%}
-
+{%block title%}
+<title> Configuraciones </title>
+{%endblock%}
 {% block body %}
 <h1>Configuraciones</h1>
 <div class="row ">
     <!-- Encabezado -->
-    <div class="col-md-6 mx-auto" style="width: 600px;">
-        <br>
-        <table  class="table table-borderless ">
-            <tbody>
-                <tr>
-                    <td > Ingrese la dirección IP</td>
-                    <td ><input type="text" name="direccionIP" value=" "></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+   
     <br>
     <!-- Mensaje a mostrar con las diferentes opciones -->
     <div class="col-md-10 mx-auto " >
@@ -22,11 +14,14 @@
         <table   class="table table-borderless  ">
             <tbody>
                 <tr>
-                    <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Cambiar el nombre del dispositivo</button> </td>
-                    <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Crear una interfaz</button></td>
+                    <td >
+
+                      <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#cambioNombre" data-bs-whatever="@mdo">Cambiar el nombre del dispositivo</button> 
+                    </td>
+                    <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#loockback" data-bs-whatever="@mdo">Crear una interfaz de Lookcbackp</button></td>
                 </tr>
                 <tr>
-                    <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" > Crear una VLAN</button> </td>
+                    <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#vlan" data-bs-whatever="@mdo" > Crear una VLAN</button> </td>
                     <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"> Crear un DHCP</button> </td>
                 </tr>
                 <tr>
@@ -38,7 +33,8 @@
         </table>
     </div>
     <!-- Mensaje de Alerta  -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Cambio Nombre  -->
+  <div class="modal fade" id="cambioNombre" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -49,23 +45,115 @@
           <form>
             <div class="mb-3">
               <label for="recipient-name" class="col-form-label">Usuario</label>
-              <input type="text" class="form-control" id="recipient-name">
+              <input type="text" class="form-control" id="usuario">
             </div>
             <div class="mb-3">
-              <label for="message-text" class="col-form-label">Contraseña</label>
-              <textarea class="form-control" id="message-text"></textarea>
+              <label for="recipient-name" class="col-form-label">Contraseña</label>
+              <input type="text" class="form-control" id="contrasenia">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Dirección IP</label>
+              <input type="text" class="form-control" id="direccionip" value="0.0.0.0">
+            </div>
+            <div class="mb-3">
+              <label for="message-text" class="col-form-label">Nombre del Dispositivo</label>
+              <input type="text" class="form-control" id="nombreDispositivo">
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Send message</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary">Enviar</button>
         </div>
       </div>
     </div>
-  </div>  
-  
-  
+  </div> 
+      <!-- loockback  -->
+      <div class="modal fade" id="loockback" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Datos</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Usuario</label>
+                  <input type="text" class="form-control" id="usuario">
+                </div>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Contraseña</label>
+                  <input type="text" class="form-control" id="contrasenia">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Dirección IP</label>
+                  <input type="text" class="form-control" id="direccionip"  value="0.0.0.0">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Nombre del Lookcback</label>
+                  <input type="text" class="form-control" id="nombreloockback">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Dirección Ip de Lookcbackp</label>
+                  <input type="text" class="form-control" id="direccioniploockback" value="0.0.0.0">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Mascara de Lookcbackp</label>
+                  <input type="text" class="form-control" id="mascaraloocback" value="0.0.0.0">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-primary">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>   
+      <!-- Vlan -->
+      <div class="modal fade" id="vlan" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Datos</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Usuario</label>
+                  <input type="text" class="form-control" id="usuario">
+                </div>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Contraseña</label>
+                  <input type="text" class="form-control" id="contrasenia">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Dirección IP</label>
+                  <input type="text" class="form-control" id="direccionip"  value="0.0.0.0">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Nombre de la VLAN </label>
+                  <input type="text" class="form-control" id="nombreVlan">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Dirección Ip de VLAN</label>
+                  <input type="text" class="form-control" id="direccionipVlan" value="0.0.0.0">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Mascara de VLAN</label>
+                  <input type="text" class="form-control" id="mascaraVlan" value="0.0.0.0">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-primary">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>   
 </div> 
 
 {%endblock%}
