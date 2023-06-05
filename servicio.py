@@ -136,5 +136,5 @@ class Servicio:
         respuesta = requests.get(url, headers=self.headers, data=json.dumps(payload), auth=(self.Usuario, self.Contrasenia), verify=False)
         return respuesta
 #Pruebas de funcionamiento
-vlan = Servicio('admin','cisco12345','10.10.10.1')
-print(vlan.Vlan_interface('Vlan700','20.80.60.2','255.255.255.0'))
+#vlan = Servicio('admin','cisco12345','10.10.10.1')
+#print(vlan.Vlan_interface('Vlan700','20.80.60.2','255.255.255.0'))
