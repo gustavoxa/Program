@@ -1,37 +1,93 @@
 {%extends './base.html'%}
-{%block title%}
-<title>Reportes</title>
-{%endblock%}
+{%block title%} Información {%endblock%}
 
 {% block body %}
 <h1>
     Reportes
 </h1>
-<div class="row ">
-    <div class="col-md-6 mx-auto" style="width: 600px;">
-        <br>
-        <table  class="table table-borderless ">
-            <tbody>
-                <tr>
-                    <td > Ingrese la dirección IP</td>
-                    <td ><input type="text" name="direccionIP" value=" "></td>
-                </tr>
-            </tbody>
-        </table>
+<form  method="post" id="formulario" action="/exporpdf" >
+    <div style="text-align: center;" >
+      <table class="tabla_datos" >
+        <tr>
+          <td style="width: 220px; text-align: left;">
+            <div class="mb-3"  style="width: 200px;">
+              <label for="recipient-name" class="col-form-label">Usuario</label>
+              <input type="text" class="form-control" id="usuario">
+            </div>
+          </td>
+          <td style="width: 220px; text-align: left;">
+            <div class="mb-3" style="width: 200px;">
+              <label for="message-text" class="col-form-label">Contraseña</label>
+              <input type="password" class="form-control" id="contrasenia">
+            </div>
+          </td>
+          <td style="width: 220px; text-align: left;">
+            <div class="mb-3" style="width: 200px;">
+              <label for="message-text" class="col-form-label">Dirección IP</label>
+              <input type="text" class="form-control" id="direccionip">
+            </div>
+            <div class="col-md-10 mx-auto " >
+          </td>
+        </tr>
+      </table>  
     </div>
-    <br>
-    <div class="col-md-10 mx-auto " >
         <br>
         <table   class="table table-borderless  ">
             <tbody>
                 <tr>
-                    <td ><button>Protocolos</button></td>
-                    <td ><button>Estado del dispositivo</button></td>
-                    <td> <button>Configuraciones de Red</button> </td>
+                    <td ><button id="protocolos" type="submit" class="btn btn-link">Protocolos</button></td>
+                    <td ><button id="estadodispositivo" type="submit" class="btn btn-link">Estado del dispositivo</button></td>
+                    <td> <button id="red" type="submit" class="btn btn-link">Configuraciones de Red</button> </td>
                 </tr>
-               
             </tbody>
         </table>
     </div>
-</div> 
+    <div id="respuesta">
+      <p id="texto"> </p>
+    </div>  
+</form>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    var opcion;
+    $('#protocolos').click(function(){
+      opcion=1;
+    });
+    $('#estadodispositivo').click(function(){
+      opcion=2;
+    });
+    $('#red').click(function(){
+      opcion=3;
+    });
+    $('#formulario').on('submit',function(event){
+        event.preventDefault();
+        console.log('ENTRE');
+        console.log(opcion);
+        usuario = $('#usuario').val();
+        console.log(usuario);
+
+        $.ajax({
+          type: "POST",
+          url: '/exporpdf',
+          data:{
+            usuario:$('#usuario').val(),
+            contrasenia:$('#contrasenia').val(),
+            direccionip:$('#direccionip').val(),
+            Opcion:opcion
+          },
+          success:function(response){
+            console.log('Exitoso',opcion);
+            mensaje(response);
+          },
+          error:function(response){
+            alert('Error')
+          }
+        });
+
+
+    })
+    function mensaje(data){
+            $('#texto').text(data['Respuesta'][0]);
+    }
+
+  </script>
 {%endblock%}
