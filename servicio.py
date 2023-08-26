@@ -1,7 +1,8 @@
 import requests
 import json
+import pandas as pd
 from pprint import pprint
-
+import pickle 
 class Servicio:
     Usuario = " "
     Contrasenia = " "
@@ -38,7 +39,7 @@ class Servicio:
                 }
             ]
          }
-        return url
+        self.Peticiones_put(url,payload)
 # Creación de Vlans
    
     def Vlan_interface(self,nombre_vlan,ip_vlan,mascara_vlan):
@@ -62,6 +63,32 @@ class Servicio:
          }
         print(url)
         self.Peticiones_put(url,payload)
+
+# Asignación de IP
+
+    def interface(self,interfaceurl,interface,ip,mascara):
+        module = "ietf-interfaces:interfaces"
+        url = f"https://{self.Ip}:{self.port}/restconf/data/{module}/interface={interfaceurl}"
+        payload = {
+            "ietf-interfaces:interface": {
+                "name": interface,
+                "type": "iana-if-type:ethernetCsmacd",
+                "enabled": True,
+                "ietf-ip:ipv4": {
+                    "address": [
+                        {
+                            "ip": ip,
+                            "netmask": mascara
+                        }
+                    ]
+                }
+        
+            }
+         }
+        print(url)
+        print(payload)
+        self.Peticiones_put(url,payload)
+
     
 # Cambiar nombre 
     def Nombre_dispositivo(self,nombre):
@@ -72,8 +99,99 @@ class Servicio:
                     nombre
          }
          self.Peticiones_put(url,payload)
+#Crear usuarios
+    def Usuarios(self,user,password):
+        module = 'Cisco-IOS-XE-native:native/username'
+        url = f"https://{self.Ip}:{self.port}/restconf/data/{module}"    
+        payload = {
+            "Cisco-IOS-XE-native:username": 
+            [
+                {
+                    "name": user,
+                    "privilege": 15,
+                      "secret": {
+                          "encryption": "9",
+                          "secret": "$9$nbucXlXs.KZwHU$N1yYgE2D3Jnzdn.nljSAZHgjboFcfEEn2q5lmYBRJT."
+                          } 
+                 }
+             ]
+         }
+        self.Peticiones_patch(url,payload)
+#Configurar DHCP
+    def Configuracion_DHCP(self,ipminexcl,ipmaxexcluded,nombredchp,ipgateway,mascara,red):
+        module = "Cisco-IOS-XE-native:native/ip/dhcp"
+        url = f"https://{self.Ip}:{self.port}/restconf/data/{module}"   
+        payload =  {
+            "Cisco-IOS-XE-native:dhcp": {
+                "Cisco-IOS-XE-dhcp:excluded-address": {
+                    "low-high-address-list": 
+                    [
+                        {
+                            "low-address": ipminexcl,
+                            "high-address": ipmaxexcluded
+                        }
+                    ]
+                },
+                "Cisco-IOS-XE-dhcp:pool": [
+                    {
+                        "id": nombredchp,
+                        "default-router": {
+                            "default-router-list": 
+                            [
+                                ipgateway
+                            ]
+                        },
+                        "dns-server": 
+                        {
+                            "dns-server-list": 
+                            [
+                                "8.8.8.8"
+                            ]
+                        },
+                        "network": {
+                            "primary-network": 
+                            {
+                                "number": red,
+                                "mask": mascara
+                             }
+                         }
+                     }
+                 ] 
+             }    
+        }
+        self.Peticiones_patch(url,payload)
+#Crear SNMP
+    def Snmp(self,comunidad,tipo):
+        if (tipo == 'Lectura'):
+             permiso='ro'
+             opcion = 'RO'
+        else:
+             permiso= 'rw'
+             opcion = 'RW'
+        print(tipo)
+        my_json = r'null'
+        my_dict = json.loads(my_json)
+        my_json_again = json.dumps(my_dict)
+        print(my_json_again) 
+
+        module = 'Cisco-IOS-XE-native:native/snmp-server'
+        url = f"https://{self.Ip}:{self.port}/restconf/data/{module}"    
+        payload = {
+            "Cisco-IOS-XE-native:snmp-server": {
+                "Cisco-IOS-XE-snmp:community": [
+                    {
+                        "name": comunidad,
+                        "access-list-name": permiso
+                    }
+                ]
+            }
+            
+        }
+        print(payload)
+        self.Peticiones_patch(url,payload)
+
 # Metodo show
-# 1 Ver todas las interfaces
+# 1 Mostrar nombre
 # 2 Ver las interfaces con su IP
 # 3 Ver todas las tablas ARP
 # 4 Ver protocolos de capa 3
@@ -86,41 +204,44 @@ class Servicio:
 # 11 Ver las estadisticas de memoria
 # 12 mostrar vlans
     def Opciones_show(self,opcion):
-        module ="Cisco-IOS-XE-native:native"
-        url = f"https://{self.Ip}:{self.port}/restconf/data/{module}"
         match opcion:
             case 1:
-                mensaje = 'interfaces '
+                module ="Cisco-IOS-XE-native:native/hostname"
             case 2:
-                mensaje = "ip interface brief"
+                module ="Cisco-IOS-XE-native:native/ip/dhcp" 
             case 3:
-                mensaje = "arp"
+                module = "ietf-interfaces:interfaces/interface"
             case 4:
-                mensaje = 'protocols' 
+                module = "Cisco-IOS-XE-native:native" 
             case 5:
-                mensaje = 'hosts'
+                module = 'Cisco-IOS-XE-native:native/username'
             case 6:
-                mensaje = 'users'
+                module = "Cisco-IOS-XE-native:native/interface/Vlan"
             case 7:
-                mensaje = 'ip route summary'
+                module = 'Cisco-IOS-XE-native:native/router=router-ospf'
             case 8:
-                mensaje = 'ip traffic'
+                module = 'Cisco-IOS-XE-memory-oper:memory-statistics'
             case 9:
-                mensaje = 'cdp neighbors detail'
+                module = 'Cisco-IOS-XE-process-cpu-oper:cpu-usage'
             case 10:
-                mensaje = 'processes'
+                module = 'system'
             case 11:
-                mensaje = 'memory'
+                module = 'Cisco-IOS-XE-native:native/snmp-server'
             case 12:
                 mensaje = 'vlan-membership'
             case _:
                 mensaje = 'Error'
+        
+        url = f"https://{self.Ip}:{self.port}/restconf/data/{module}"
         payload={
              "Cisco-IOS-XE-native": {
-                 "show": mensaje
+                 "show":"hola"
              }
         }
-        self.Peticiones_get(url,payload)        
+        respuesta_json=self.Peticiones_get(url,payload)
+        respuesta_string=str(respuesta_json)
+        return respuesta_string
+       
 # Metodo para resolver peticiones del tipo put 
     def Peticiones_put(self,url,payload):
         requests.packages.urllib3.disable_warnings()
@@ -134,7 +255,26 @@ class Servicio:
     def Peticiones_get(self,url,payload):
         requests.packages.urllib3.disable_warnings()
         respuesta = requests.get(url, headers=self.headers, data=json.dumps(payload), auth=(self.Usuario, self.Contrasenia), verify=False)
-        return respuesta
+        respuesta_json=respuesta.json()
+        return respuesta_json
+#Metodo para resolver peticiones del tipo patch
+    def Peticiones_patch(self,url,payload):
+        requests.packages.urllib3.disable_warnings()
+        respuesta = requests.patch(url, headers=self.headers, data=json.dumps(payload), auth=(self.Usuario, self.Contrasenia), verify=False)
+        if (respuesta.status_code == 204 or respuesta.status_code == 201):
+            print("Successfully updated interface")
+        else:
+            print("Issue with updating interface")
+
+
 #Pruebas de funcionamiento
-#vlan = Servicio('admin','cisco12345','10.10.10.1')
-#print(vlan.Vlan_interface('Vlan700','20.80.60.2','255.255.255.0'))
+#showvla = Servicio('admin','cisco12345','10.10.10.1')
+#showvla.Configuracion_DHCP("30.30.30.1","30.30.30.10","Rest","30.30.30.1","255.255.255.0","30.30.30.0")
+#respuestag=showvla.Opciones_show(2)
+#print(respuestag)
+#respuestag=showvla.Opciones_show(4)
+#resultados=str(respuestag)
+
+    
+#df=pd.DataFrame.from_dict(respuestag)
+#print(df)
