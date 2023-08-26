@@ -2,52 +2,113 @@
 {%block title%} Información {%endblock%}
 {% block body %}
 <h1>Información</h1>
-<div class="col-md-10 mx-auto " >
-    <br>
-    <table   class="table table-borderless  ">
-        <tbody>
-            <tr>
-                <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Nombre del dispositivo</button> </td>
-                <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">Interfaces</button></td>
-            </tr>
-            <tr>
-                <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" > VLAN</button> </td>
-                <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"> DHCP</button> </td>
-            </tr>
-            <tr>
-                <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"> Direcciones IP </button> </td>
-                <td ><button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"> Direccionamiento</button> </td>
-            </tr>
-           
-        </tbody>
-    </table>
-</div>
-<!-- Mensaje de Alerta  -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h1 class="modal-title fs-5" id="exampleModalLabel">Datos</h1>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-      <form>
-        <div class="mb-3">
-          <label for="recipient-name" class="col-form-label">Usuario</label>
-          <input type="text" class="form-control" id="recipient-name">
-        </div>
-        <div class="mb-3">
-          <label for="message-text" class="col-form-label">Contraseña</label>
-          <input type="text" class="form-control" id="contrasenia">
-        </div>
-        
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary">Send message</button>
-    </div>
+<br>
+<style>
+  .categoriesDiv {width:100% !important;}
+</style>
+<form id="formulario" method="post" action="/consultar">
+  <div style="text-align: center;" >
+    <table class="tabla_datos" >
+      <tr>
+        <td style="width: 220px; text-align: left;">
+          <div class="mb-3"  style="width: 200px;">
+            <label for="recipient-name" class="col-form-label">Usuario</label>
+            <input type="text" class="form-control"  name="usuario" id="usuario">
+          </div>
+        </td>
+        <td style="width: 220px; text-align: left;">
+          <div class="mb-3" style="width: 200px;">
+            <label for="message-text" class="col-form-label">Contraseña</label>
+            <input type="password" class="form-control" name="contrasenia" id="contrasenia">
+          </div>
+        </td>
+        <td style="width: 220px; text-align: left;">
+          <div class="mb-3" style="width: 200px;">
+            <label for="message-text" class="col-form-label">Dirección IP</label>
+            <input type="text" class="form-control" name="direccionip" id="direccionip">
+          </div>
+          <div class="col-md-10 mx-auto " >
+        </td>
+      </tr>
+    </table>  
   </div>
-</div>
-</div>  
+      <br>
+      <table   class="table table-borderless  ">
+          <tbody>
+              <tr>
+                  <td ><button  type="submit" id="nombre" class="btn btn-link"> Nombre del dispositivo</button> </td>
+                  <td ><button  type="submit" id="interfaces" class="btn btn-link" >Interfaces</button></td>
+              </tr>
+              <tr>
+                  <td > <button type="submit" id="vlan" class="btn btn-link" > VLAN</button> </td>
+                  <td > <button type="submit" id="dhcp" class="btn btn-link" > DHCP</button> </td>
+              </tr>
+              <tr>
+                  <td ><button type="submit" id="direccionesip" class="btn btn-link" > Direcciones IP </button> </td>
+                  <td ><button type="submit" id="SNMP" class="btn btn-link" > SNMP</button> </td>
+              </tr>
+             
+          </tbody>
+      </table>
+  </div>
+  <div id="respuesta">
+    <p id="encabezado" ></p>
+    <pre id="myText" ></pre>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    var opcion;
+    $('#nombre').click(function(){
+
+      opcion=1;
+    });
+    $('#interfaces').click(function(){
+      opcion=2;
+    });
+    $('#vlan').click(function(){
+      opcion=3;
+    });
+    $('#dhcp').click(function(){
+      opcion=4;
+    });
+    $('#direccionesip').click(function(){
+      opcion=5;
+    });
+    $('#SNMP').click(function(){
+      opcion=6;
+    });
+
+    $('#formulario').on('submit',function(event){
+        event.preventDefault();
+        console.log('ENTRE');
+        console.log(opcion)
+        $.ajax({
+          type: "POST",
+          url: '/consultar',
+          data:{
+            usuario:$('#usuario').val(),
+            contrasenia:$('#contrasenia').val(),
+            direccionip:$('#direccionip').val(),
+            opcion:opcion
+          },
+          success:function(response){
+            console.log('Exitoso',opcion);
+            console.log(response);
+            imprimir(response);
+          },
+          error:function(response){
+            alert('Error')
+          }
+        });
+
+    })
+    function imprimir(data){
+      $('#encabezado').text(data['Respuesta'][0]);
+      document.getElementById("myText").innerHTML = JSON.stringify(data, null, 4);
+    }
+
+  </script>
+</form>
+
+  
 {%endblock%}
